@@ -1,4 +1,4 @@
-package hitchhikers;
+package main;
 
 
 import java.io.IOException;
