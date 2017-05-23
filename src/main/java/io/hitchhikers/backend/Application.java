@@ -1,4 +1,4 @@
-package main;
+package io.hitchhikers.backend;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;

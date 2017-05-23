@@ -1,4 +1,4 @@
-package main;
+package io.hitchhikers.backend;
 import org.json.JSONException;
 import org.json.JSONObject;
 
