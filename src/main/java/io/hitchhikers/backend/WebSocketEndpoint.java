@@ -1,4 +1,4 @@
-package main;
+package io.hitchhikers.backend;
 
 
 import java.io.IOException;
