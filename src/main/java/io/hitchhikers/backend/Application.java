@@ -1,5 +1,7 @@
 package io.hitchhikers.backend;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -38,12 +40,20 @@ public class Application {
 		 * application is first constructed. Typically, this shouldn't happen but it was
 		 * used in testing functionality.
 		 */
-		Connection conn = null;
+		Connection conn = null; 
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false");
+			// // HEROKU JawsDB connection code
+			// URI jdbUri = new URI(System.getenv(Constants.JAWSDB_URL));
+
+		 //    String username = jdbUri.getUserInfo().split(":")[0];
+		 //    String password = jdbUri.getUserInfo().split(":")[1];
+		 //    String port = String.valueOf(jdbUri.getPort());
+		 //    String jdbUrl = "jdbc:mysql://" + jdbUri.getHost() + ":" + port + jdbUri.getPath();
+
+		    // Original localhost db connection: "jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false"
+			conn = getConnection();
 			st = conn.createStatement();
 			rs = st.executeQuery("SELECT * FROM CurrentTrips");
 			while (rs.next()) {
@@ -57,10 +67,30 @@ public class Application {
 			while (rs1.next()) {
 				previousSearches.put(rs1.getString("Email"), new ArrayList<String>());
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (SQLException e) { // ClassNotFoundException | 
 			e.printStackTrace();
 		}	
 	}
+
+	/*
+	 * Connection returns the JawsDB connection url to access database on heroku
+	 */
+	private static Connection getConnection() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			System.out.println(Constants.JAWSDB_URL);
+		    URI jdbUri = new URI(Constants.JAWSDB_URL);
+		    String username = jdbUri.getUserInfo().split(":")[0];
+		    String password = jdbUri.getUserInfo().split(":")[1];
+		    String port = String.valueOf(jdbUri.getPort());
+		    String jdbUrl = "jdbc:mysql://" + jdbUri.getHost() + ":" + port + jdbUri.getPath();
+			return DriverManager.getConnection(jdbUrl, username, password);
+		} catch(URISyntaxException | SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		} 
+	}
+
 	/*
 	 * ParseMessage is the main method used for figuring out what to do with a JSONObject sent
 	 * from the frontend app to the backend through the WebSocketEndpoint. Here, other functions
@@ -74,8 +104,8 @@ public class Application {
 		ResultSet rs = null;
 	   
 	    try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false");
+			// Class.forName("com.mysql.jdbc.Driver");
+			conn = getConnection();
 			st = conn.createStatement();
 //			System.out.println(message.toString());
 	        if (message.get("message").equals("signup")) {
@@ -108,7 +138,7 @@ public class Application {
 			else if (message.get("message").equals("editprofile")) {
 				wsep.sendToSession(session, toBinary(editProfile(message, conn)));
 			}
-		} catch (ClassNotFoundException | SQLException | JSONException e) {
+		} catch (SQLException | JSONException e) {
 			JSONObject response = new JSONObject();
 			try {
 				response.put("SQLFail", "SQL connection could not be made.");
@@ -1303,8 +1333,8 @@ public class Application {
 	    Statement st = null;
 	    ResultSet rs = null;
 	    try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false");
+			// Class.forName("com.mysql.jdbc.Driver");
+			conn = getConnection();
 	        st = conn.createStatement();
 	        if (message.get("message").equals("signup")) {
 				return signUp(message, conn);
@@ -1322,7 +1352,7 @@ public class Application {
 				return search(message, conn);
 			}
 	        
-		} catch (ClassNotFoundException | SQLException | JSONException e) {
+		} catch (SQLException | JSONException e) {
 			JSONObject response = new JSONObject();
 			try {
 				response.put("SQLFail", "SQL connection could not be made.");
