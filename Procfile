@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/* HitchhikersBackend
+web: java $JAVA_OPTS -jar target/dependency/webapp-runner.jar --port $PORT target/*.war
