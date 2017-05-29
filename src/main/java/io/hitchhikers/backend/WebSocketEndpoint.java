@@ -41,11 +41,20 @@ public class WebSocketEndpoint {
 		logger.log(Level.INFO, "Connection opened. (id:)" + session.getId());
 		sessions.put(session.getId(), session);
 		lock.unlock();
+		System.out.println("MADE IT TO THE END OF OPEN");
 	}
 
+	// boolean last,
+
+	
+	// public void onMessage(String json, Session session) {
+	// 	System.out.println("ONMESSAGE RECEIVED: " + json);
+	// }
 	@OnMessage
 	public void onMessage(byte[] b, boolean last, Session session) {
+		System.out.println("IN THE ONMESSAGE FUNCTION BEFORE LOCK?");
 		lock.lock();
+		System.out.println("IN THE ONMESSAGE FUNCTION");
 		String printMe="";
 		try {
 			printMe = new String(b, "US-ASCII");
@@ -65,6 +74,8 @@ public class WebSocketEndpoint {
 //		}
 		application.parseMessage(json, session, this);
 //		System.out.println(printMe);
+		System.out.println(printMe);
+		System.out.println(json);
 		//send message back, convert to 
 		lock.unlock();
 	}

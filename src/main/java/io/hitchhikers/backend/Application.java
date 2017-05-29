@@ -45,6 +45,8 @@ public class Application {
 		ResultSet rs = null;
 		try {
 			// // HEROKU JawsDB connection code
+			Class.forName("com.mysql.jdbc.Driver");
+			// conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false");
 			// URI jdbUri = new URI(System.getenv(Constants.JAWSDB_URL));
 
 		 //    String username = jdbUri.getUserInfo().split(":")[0];
@@ -53,7 +55,10 @@ public class Application {
 		 //    String jdbUrl = "jdbc:mysql://" + jdbUri.getHost() + ":" + port + jdbUri.getPath();
 
 		    // Original localhost db connection: "jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false"
-			conn = getConnection();
+			
+			// conn = getConnection();
+			// conn = DriverManager.getConnection("jdbc:mysql://v02yrnuhptcod7dk.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/as5y1g3lj33esv6r?user=pbwdeafh1fdpr1y1&password=po9zgmty3j02semb&useSSL=false");
+			conn = DriverManager.getConnection("jdbc:mysql://54.219.153.227/Hitchhikers?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
 			rs = st.executeQuery("SELECT * FROM CurrentTrips");
 			while (rs.next()) {
@@ -64,10 +69,12 @@ public class Application {
 			}
 			Statement st1 = conn.createStatement();
 			ResultSet rs1 = st1.executeQuery("SELECT * FROM TotalUsers");
+			System.out.println("IN APPLICATION ABOUT TO QUERY DATABASE USERS");
 			while (rs1.next()) {
 				previousSearches.put(rs1.getString("Email"), new ArrayList<String>());
+				System.out.println(rs1.getString("Email"));
 			}
-		} catch (SQLException e) { // ClassNotFoundException | 
+		} catch (ClassNotFoundException | SQLException e) { // 
 			e.printStackTrace();
 		}	
 	}
@@ -90,6 +97,7 @@ public class Application {
 			return null;
 		} 
 	}
+	
 
 	/*
 	 * ParseMessage is the main method used for figuring out what to do with a JSONObject sent
@@ -104,8 +112,12 @@ public class Application {
 		ResultSet rs = null;
 	   
 	    try {
+			Class.forName("com.mysql.jdbc.Driver");
+			// conn = getConnection();
+			// conn = DriverManager.getConnection("jdbc:mysql://v02yrnuhptcod7dk.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/as5y1g3lj33esv6r?user=pbwdeafh1fdpr1y1&password=po9zgmty3j02semb&useSSL=false");
+			conn = DriverManager.getConnection("jdbc:mysql://54.219.153.227/Hitchhikers?user=root&password=root&useSSL=false");
 			// Class.forName("com.mysql.jdbc.Driver");
-			conn = getConnection();
+			// conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
 //			System.out.println(message.toString());
 	        if (message.get("message").equals("signup")) {
@@ -138,7 +150,7 @@ public class Application {
 			else if (message.get("message").equals("editprofile")) {
 				wsep.sendToSession(session, toBinary(editProfile(message, conn)));
 			}
-		} catch (SQLException | JSONException e) {
+		} catch (ClassNotFoundException | SQLException | JSONException e) {
 			JSONObject response = new JSONObject();
 			try {
 				response.put("SQLFail", "SQL connection could not be made.");
@@ -292,6 +304,7 @@ public class Application {
 	 * 			if loginfail --> "loginfail",reason
 	 */
 	public JSONObject signIn(JSONObject message, Session session, Connection conn) {
+		System.out.println("INSIDE THE SIGNIN FUNCTION");
 		JSONObject response = new JSONObject();
 		try {
 			Statement st = conn.createStatement();
@@ -307,6 +320,7 @@ public class Application {
 						response.put("message", "loginsuccess");
 						response.put("loginsuccess", "Logged in.");
 						emailSessions.put(signinemail, session);
+						System.out.println("LOGINSUCCESS PASSWORD");
 						//User details for front-end.
 						JSONObject userDetails = addUserToJSON(signinemail, conn);
 						for (String key : JSONObject.getNames(userDetails)) {
@@ -317,6 +331,8 @@ public class Application {
 							response.put(key, feedDetails.get(key));
 						}
 						//return all of the details of user and what is needed on front end
+						System.out.println("ABOUT TO RETURN RESPONSE");
+						System.out.println(response);
 						return response;
 					}
 					else {
@@ -1091,6 +1107,7 @@ public class Application {
 				rs1 = st1.executeQuery("SELECT * from TotalUsers WHERE Email='" + email + "';");
 				if (rs1.next()) {
 					currFeed.put("userpicture", rs1.getString("Picture"));
+					System.out.println("userpicture is: " + rs1.getString("Picture"));
 				}
 				if (rs1 != null) {
 					rs1.close();
@@ -1333,8 +1350,12 @@ public class Application {
 	    Statement st = null;
 	    ResultSet rs = null;
 	    try {
+			Class.forName("com.mysql.jdbc.Driver");
+			// conn = getConnection();
+			// conn = DriverManager.getConnection("jdbc:mysql://v02yrnuhptcod7dk.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/as5y1g3lj33esv6r?user=pbwdeafh1fdpr1y1&password=po9zgmty3j02semb&useSSL=false");
+			conn = DriverManager.getConnection("jdbc:mysql://54.219.153.227/Hitchhikers?user=root&password=root&useSSL=false");
 			// Class.forName("com.mysql.jdbc.Driver");
-			conn = getConnection();
+			// conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false");
 	        st = conn.createStatement();
 	        if (message.get("message").equals("signup")) {
 				return signUp(message, conn);
@@ -1352,7 +1373,7 @@ public class Application {
 				return search(message, conn);
 			}
 	        
-		} catch (SQLException | JSONException e) {
+		} catch (ClassNotFoundException | SQLException | JSONException e) {
 			JSONObject response = new JSONObject();
 			try {
 				response.put("SQLFail", "SQL connection could not be made.");
