@@ -45,7 +45,7 @@ public class Application {
 		ResultSet rs = null;
 		try {
 			// // HEROKU JawsDB connection code
-			Class.forName("com.mysql.jdbc.Driver");
+			// Class.forName("com.mysql.jdbc.Driver");
 			// conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false");
 			// URI jdbUri = new URI(System.getenv(Constants.JAWSDB_URL));
 
@@ -56,9 +56,9 @@ public class Application {
 
 		    // Original localhost db connection: "jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false"
 			
-			// conn = getConnection();
+			conn = getConnection();
 			// conn = DriverManager.getConnection("jdbc:mysql://v02yrnuhptcod7dk.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/as5y1g3lj33esv6r?user=pbwdeafh1fdpr1y1&password=po9zgmty3j02semb&useSSL=false");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&useSSL=false");
+			// conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&useSSL=false");
 			st = conn.createStatement();
 			rs = st.executeQuery("SELECT * FROM CurrentTrips");
 			while (rs.next()) {
@@ -74,7 +74,7 @@ public class Application {
 				previousSearches.put(rs1.getString("Email"), new ArrayList<String>());
 				System.out.println(rs1.getString("Email"));
 			}
-		} catch (ClassNotFoundException | SQLException e) { // 
+		} catch (SQLException e) { // ClassNotFoundException | 
 			e.printStackTrace();
 		}	
 	}
@@ -112,10 +112,10 @@ public class Application {
 		ResultSet rs = null;
 	   
 	    try {
-			Class.forName("com.mysql.jdbc.Driver");
-			// conn = getConnection();
+			// Class.forName("com.mysql.jdbc.Driver");
+			conn = getConnection();
 			// conn = DriverManager.getConnection("jdbc:mysql://v02yrnuhptcod7dk.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/as5y1g3lj33esv6r?user=pbwdeafh1fdpr1y1&password=po9zgmty3j02semb&useSSL=false");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&useSSL=false");
+			// conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&useSSL=false");
 			// Class.forName("com.mysql.jdbc.Driver");
 			// conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
@@ -150,7 +150,7 @@ public class Application {
 			else if (message.get("message").equals("editprofile")) {
 				wsep.sendToSession(session, toBinary(editProfile(message, conn)));
 			}
-		} catch (ClassNotFoundException | SQLException | JSONException e) {
+		} catch (SQLException | JSONException e) {
 			JSONObject response = new JSONObject();
 			try {
 				response.put("SQLFail", "SQL connection could not be made.");
@@ -1350,10 +1350,10 @@ public class Application {
 	    Statement st = null;
 	    ResultSet rs = null;
 	    try {
-			Class.forName("com.mysql.jdbc.Driver");
-			// conn = getConnection();
+			// Class.forName("com.mysql.jdbc.Driver");
+			conn = getConnection();
 			// conn = DriverManager.getConnection("jdbc:mysql://v02yrnuhptcod7dk.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/as5y1g3lj33esv6r?user=pbwdeafh1fdpr1y1&password=po9zgmty3j02semb&useSSL=false");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&useSSL=false");
+			// conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&useSSL=false");
 			// Class.forName("com.mysql.jdbc.Driver");
 			// conn = DriverManager.getConnection("jdbc:mysql://localhost/Hitchhikers?user=root&password=root&useSSL=false");
 	        st = conn.createStatement();
@@ -1373,7 +1373,7 @@ public class Application {
 				return search(message, conn);
 			}
 	        
-		} catch (ClassNotFoundException | SQLException | JSONException e) {
+		} catch (SQLException | JSONException e) {
 			JSONObject response = new JSONObject();
 			try {
 				response.put("SQLFail", "SQL connection could not be made.");
